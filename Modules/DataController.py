@@ -90,6 +90,10 @@ class DataController:
     def set_face_lookat(self,data):
         self.face_lookat = data
 
+    def set_camface_loc_polar(self,data):
+        self.camface_loc_polar = data
+    
+
 
     ###########################################################
     def get_motor_value(self):
