@@ -1,0 +1,27 @@
+[system]
+title = FTRA_CORE
+version = 1.0.0
+update = 2023-03-26 17:16:19
+
+[arm_length]
+base_height = 15
+arm_1 = 20
+arm_2 = 20
+arm_hor = 5
+arm_ver = 2
+
+[cam_offset]
+hor = 0
+ver = 0
+
+[motor]
+angle_offset = 1/3
+default_0 = 1/2
+default_1 = 1/2
+default_2 = 1/2
+default_3 = 1/1
+default_4 = 1/2
+
+[destination]
+distance = 0.5
+
