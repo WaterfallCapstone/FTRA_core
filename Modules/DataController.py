@@ -3,11 +3,28 @@ import numpy as np
 class DataController:
     def __init__(self,env):
         self.env = env
-        self.arm_length = np.array([0,0,0,0,0])
-        self.camera_offset = np.array([0,0])
+        self.arm_length = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+        self.camera_offset = np.array([0.0,0.0])
         self.motor_offset_angle = np.pi
-        self.motor_value = np.array([0,0,0,0,0])
-        self.destination_distance = 0
+        self.motor_value = np.array([0.0,0.0,0.0,0.0,0.0])
+        self.destination_distance = 0.0
+        self.tickrate = 100
+        self.axis = 4
+
+        self.armtip_loc_polar = np.array([self.arm_length[1] + self.arm_length[2] ,np.pi/2, np.pi/2])
+        self.armtip_loc_cart = np.array([0.0,0.0,0.0])
+        self.armtip_dir_polar = np.array([1.0,0.0,0.0])
+
+        # self.cam_loc_polar = np.array([self.arm_length[1] + self.arm_length[2] ,np.pi/2, np.pi/2])
+        self.cam_loc_cart = np.array([0.0,0.0,0.0])
+        self.cam_dir_polar = np.array([1.0,0.0,0.0])
+
+        self.camface_loc_polar = np.array([50.0, 0.0, np.pi / 2])
+        self.camface_dir_cart = np.array([0.0, 0.0, 0.0])
+
+        self.face_loc_cart = np.array([0.0, 0.0, 0.0])
+        self.face_lookat = np.array([0.0, 0.0, 0.0])
+
 
         self.get_config()
         return
@@ -25,12 +42,14 @@ class DataController:
         
     def get_config(self):
         config = self.env.config
+        print(float(config['arm_length']['arm_1']))
 
         self.arm_length[0] = float(config['arm_length']['base_height'])
         self.arm_length[1] = float(config['arm_length']['arm_1'])
         self.arm_length[2] = float(config['arm_length']['arm_2'])
-        self.arm_length[3] = float(config['arm_length']['arm_hor'])
-        self.arm_length[4] = float(config['arm_length']['arm_ver'])
+        self.arm_length[3] = float(config['arm_length']['arm_rot'])
+        self.arm_length[4] = float(config['arm_length']['arm_cam_hor'])
+        self.arm_length[5] = float(config['arm_length']['arm_cam_ver'])
 
         self.camera_offset = np.array([float(config['cam_offset']['hor']),float(config['cam_offset']['ver'])])
 
@@ -43,7 +62,70 @@ class DataController:
         self.motor_value[4] = np.pi * self.str_to_fraction(config['motor']['default_4'])
         
         self.destination_distance = float(config['destination']['distance'])
+
+        self.tickrate = int(config['system']['tickrate'])
+        self.axis = int(config['system']['axis'])
+    #############################################################
+    def set_armtip_loc_polar(self,data):
+        self.armtip_loc_polar = data
     
+    def set_armtip_loc_cart(self,data):
+        self.armtip_loc_cart = data
+
+    def set_armtip_dir_polar(self,data):
+        self.armtip_dir_polar = data
+    
+    # def set_cam_loc_polar(self,data):
+    #     self.cam_loc_polar = data
+    
+    def set_cam_loc_cart(self,data):
+        self.cam_loc_cart = data
+
+    def set_cam_dir_polar(self,data):
+        self.cam_dir_polar = data
+    
+    def set_face_loc_cart(self,data):
+        self.face_loc_cart = data
+    
+    def set_face_lookat(self,data):
+        self.face_lookat = data
+
+
+    ###########################################################
+    def get_motor_value(self):
+        return self.motor_value
+    
+    def get_arm_length(self):
+        return self.arm_length
+    
+    def get_motor_offset_angle(self):
+        return self.motor_offset_angle
+    
+    def get_armtip_loc_polar(self):
+        return self.armtip_loc_polar
+    
+    def get_cam_offset(self):
+        return self.camera_offset
+    
+    def get_armtip_loc_cart(self):
+        return self.armtip_loc_cart
+    
+    def get_armtip_dir_polar(self):
+        return self.armtip_dir_polar
+    
+    def get_camface_loc_polar(self):
+        return self.camface_loc_polar
+    
+    def get_camface_dir_cart(self):
+        return self.camface_dir_cart
+    
+    def get_cam_loc_cart(self):
+        return self.cam_loc_cart
+    
+    def get_cam_dir_polar(self):
+        return self.cam_dir_polar
+    
+
     
     def print_env(self):
         print("default arm_length           : ",self.arm_length)
@@ -51,3 +133,5 @@ class DataController:
         print("default motor_offset_angle   : ",self.motor_offset_angle)
         print("default motor_value          : ",self.motor_value)
         print("default destination_distance : ",self.destination_distance)
+        print("default tickrate             : ",self.tickrate)
+        print("default axis                 : ",self.axis)

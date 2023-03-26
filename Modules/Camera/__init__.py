@@ -1,1 +1,1 @@
-from .CamLocation import CamLocation
+from .CamLocation import CamLocation4, CamLocation5

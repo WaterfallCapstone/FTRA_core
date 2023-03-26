@@ -10,13 +10,8 @@ class env:
         self.config = configparser.ConfigParser()
         self.config_read()
 
-        self.hello = "env"
-    
-    def sethello(self,data):
-        self.hello = data
-    
-    def gethello(self):
-        return self.hello
+    def get_config(self,data1,data2):
+        return self.config[data1][data2]
 
 
     def config_read(self):
