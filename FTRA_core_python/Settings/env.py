@@ -3,10 +3,16 @@ import configparser
 from time import strftime
 import os
 from pathlib import Path
+import sys
 
 class env:
     def __init__(self):
-        self.EnvPath = os.path.abspath(os.path.join(os.getcwd(),r'FTRA_core',r'Data',r'Config.txt'))
+        if(sys.argv[0] == "__main__.py"):
+            self.EnvPath = os.path.abspath(os.path.join(os.getcwd(),r'Data',r'Config.txt'))
+        else:
+            self.EnvPath = os.path.abspath(os.path.join(os.getcwd(),sys.argv[0],r'Data',r'Config.txt'))
+        
+        print(self.EnvPath)
         self.config = configparser.ConfigParser()
         self.config_read()
 
