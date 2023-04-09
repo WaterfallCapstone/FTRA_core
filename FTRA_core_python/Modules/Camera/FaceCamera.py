@@ -42,7 +42,8 @@ class FaceCamera:
         self.focal_length = 100
 
         self.mp_face_width = -1
-        self.distance = 50
+        # self.distance = 50
+        self.isface =False
         
     def camera_update(self):
         self.success, self.image = self.cap.read()
@@ -207,18 +208,18 @@ class FaceCamera:
         self.distance = (self.base_width * self.focal_length)/self.mp_face_width
              
 
-    def run(self,stat_q,img_q,data_q):
-        while self.cap.isOpened():
+    def run(self):
+        # while self.cap.isOpened():
             self.camera_update()
-            if not stat_q.empty():
-                stat = stat_q.get()
-                if stat == "stop":
-                    self.release()
+            # if not stat_q.empty():
+            #     stat = stat_q.get()
+            #     if stat == "stop":
+            #         self.release()
 
             if not self.success:
                 print("Ignoring empty camera frame.")
                 # If loading a video, use 'break' instead of 'continue'.
-                continue
+                return
             
             self.get_face_mesh_data()
             self.get_mp_face_width()
@@ -229,13 +230,16 @@ class FaceCamera:
             # else:
             #     os.system('clear')
             if self.results.multi_face_landmarks:
+                self.isface = True
                 data = self.get_data()
                 self.dir_vector = self.calculate_face_dir_vector(data)
-                self.face_loc = self.get_loc_polar(self.camera.get_face_loc(data))
-                img_q.put({"stat" : True, "image" : self.image})
-                data_q.put({"dir_vector":self.dir_vector, "face_loc":self.face_loc})
+                self.face_loc = self.get_loc_polar(self.get_face_loc(data))
             else:
-                img_q.put({"stat" : False, "image" : self.image})
+                self.isface = False
+            #     img_q.put({"stat" : True, "image" : self.image})
+            #     data_q.put({"dir_vector":self.dir_vector, "face_loc":self.face_loc})
+            # else:
+            #     img_q.put({"stat" : False, "image" : self.image})
             
             
 

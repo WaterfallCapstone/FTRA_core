@@ -38,8 +38,7 @@ stat2cam = Queue()
 cam2main = Queue()
 camdata2main = Queue()
 
-# main_p_list = []
-cam_p = Process(target = camera.run, args= (stat2cam, cam2main, camdata2main))
+iscamerarun = False
 
 
 port = 4000
@@ -70,26 +69,38 @@ def disconnect():
 @io.on("start", namespace="/controller")
 def start():
     print("started")
-    cam_p.start()
+    # cam_p.start()
     # main_p = Process(target=p_controller.process_main, args = (io,stat2main,cam2main,camdata2main))
     # main_p_list.append(main_p)
     # main_p.start()
     emit("started")
 
-@io.on("data", namespace="/controller")
+@io.on("video", namespace="/controller")
 def data():
-    stat = True
+    iscamerarun = True
     print("on data")
-    if( not cam2main.empty):
-        print("image")
-        imgjson = cam2main.get()
-        stat = imgjson["stat"]
-        img = imgjson["image"]
-        imgencode = cv2.imencode('.jpg', img)[1]
+    while iscamerarun:
+        camera.run()
+        imgencode = cv2.imencode('.jpg', camera.image)[1]
         stringData = base64.b64encode(imgencode).decode('utf-8')
         b64_src = 'data:image/jpg;base64,'
         stringData = b64_src + stringData
         emit("video", {"image" : stringData})
+        if camera.isface :
+            emit("face_data", {"dir_vector" : [camera.dir_vector[0],camera.dir_vector[1],camera.dir_vector[2]], "face_loc" : [camera.face_loc[0],camera.face_loc[1],camera.face_loc[2]]})
+
+    # if( not cam2main.empty):
+    #     print("image")
+    #     imgjson = cam2main.get()
+    #     stat = imgjson["stat"]
+    #     img = imgjson["image"]
+    #     imgencode = cv2.imencode('.jpg', img)[1]
+    #     stringData = base64.b64encode(imgencode).decode('utf-8')
+    #     b64_src = 'data:image/jpg;base64,'
+    #     stringData = b64_src + stringData
+    #     emit("video", {"image" : stringData})
+    
+
 
 
 
