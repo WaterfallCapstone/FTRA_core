@@ -2,7 +2,7 @@ import Settings
 from Modules import Camera
 from Modules import Motor
 from Modules import DataController
-from Modules import Face
+from Modules import LocationController
 import time
 import platform
 import os
@@ -18,15 +18,15 @@ Data = DataController(env)
 MotorLocation = Motor.MotorLocation(Data)
 if(env.get_config('system','axis') == '4') :
     CamLocation = Camera.CamLocation4(Data)
-    FaceLocation = Face.FaceLocation4(Data)
+    FaceLocation = LocationController.FaceLocation4(Data)
 else :
     CamLocation = Camera.CamLocation5(Data)
-    FaceLocation = Face.FaceLocation5(Data)
+    FaceLocation = LocationController.FaceLocation5(Data)
 
 ########change params and connections
-camera = Face.FaceCamera(1,"only dir")
-data_service = Face.DataService("rpf511")
-cameracontroller = Face.FaceCameraController(camera,data_service)
+camera = LocationController.FaceCamera(1,"only dir")
+data_service = LocationController.DataService("rpf511")
+cameracontroller = LocationController.FaceCameraController(camera,data_service)
 # cameracontroller.run_dev()
 
 Data.print_env()

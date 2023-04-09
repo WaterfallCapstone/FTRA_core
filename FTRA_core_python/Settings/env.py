@@ -10,7 +10,10 @@ class env:
         if(sys.argv[0] == "__main__.py"):
             self.EnvPath = os.path.abspath(os.path.join(os.getcwd(),r'Data',r'Config.txt'))
         else:
-            self.EnvPath = os.path.abspath(os.path.join(os.getcwd(),sys.argv[0],r'Data',r'Config.txt'))
+            temp = sys.argv[0]
+            if "." in temp:
+                temp = temp.split("/")[0]
+            self.EnvPath = os.path.abspath(os.path.join(os.getcwd(),temp,r'Data',r'Config.txt'))
         
         print(self.EnvPath)
         self.config = configparser.ConfigParser()
