@@ -111,18 +111,18 @@ class FaceCamera:
         vector_b = left_eye_loc - mouth_loc
 
         result = np.cross(vector_a,vector_b) 
-        if(self.mode == "dev"):
-            print("168 : ",[data[168].x,data[168].y,data[168].z])
-            print("130 : ",[data[130].x,data[130].y,data[130].z]," 359: ",[data[359].x,data[359].y,data[359].z]," 199 : ",[data[199].x,data[199].y,data[199].z])
-            print("vector a : ",vector_a," vector b : ",vector_b)
-            print("origin result vector : ",result)
+        # if(self.mode == "dev"):
+        #     print("168 : ",[data[168].x,data[168].y,data[168].z])
+        #     print("130 : ",[data[130].x,data[130].y,data[130].z]," 359: ",[data[359].x,data[359].y,data[359].z]," 199 : ",[data[199].x,data[199].y,data[199].z])
+        #     print("vector a : ",vector_a," vector b : ",vector_b)
+        #     print("origin result vector : ",result)
             
         return result / np.linalg.norm(result)
     
     def get_loc_polar(self,data):
         temp = self.get_loc_cart(data)
         # cm / let distance is 50
-        print(temp)
+        # print(temp)
         return np.array([50, np.arctan(temp[1] / 1.166666667), 1.5708 - np.arctan(temp[2] / 1.25)])
     
 

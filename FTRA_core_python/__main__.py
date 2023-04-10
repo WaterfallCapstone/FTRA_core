@@ -90,9 +90,9 @@ def data():
             stringData = base64.b64encode(imgencode).decode('utf-8')
             b64_src = 'data:image/jpg;base64,'
             stringData = b64_src + stringData
-            emit("video", {"image" : stringData})
+            emit("video", {"image" : stringData, "isface" : camera.isface})
             if camera.isface :
-                emit("face_data", {"dir_vector" : [camera.dir_vector[0],camera.dir_vector[1],camera.dir_vector[2]], "face_loc" : [camera.face_loc[0],camera.face_loc[1],camera.face_loc[2]]})
+                emit("face_from_cam", {"dir_vector" : [camera.dir_vector[0],camera.dir_vector[1],camera.dir_vector[2]], "face_loc" : [camera.face_loc[0],camera.face_loc[1],camera.face_loc[2]]})
             nex_time_cam = cur_time_cam + tickrate
     return
         

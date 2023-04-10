@@ -2,7 +2,7 @@
 title = FTRA_CORE
 version = 1.0.0
 update = 2023-03-26 17:16:19
-tickrate = 200
+tickrate = 20
 axis = 5
 
 [arm_length]
