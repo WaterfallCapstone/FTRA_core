@@ -27,7 +27,7 @@ else :
     FaceLocation = LocationController.FaceLocation5(Data)
 
 ########change params and connections
-camera = Camera.FaceCamera(1,"only dir")
+camera = Camera.FaceCamera(0,"only dir")
 data_service = LocationController.DataService("rpf511")
 # cameracontroller.run_dev()
 p_controller = ProcessController.ProcessController()
@@ -42,6 +42,7 @@ iscamerarun = False
 
 
 port = 4000
+tickrate = float(env.get_config('system','tickrate')) / 1000
 
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -78,27 +79,23 @@ def start():
 @io.on("video", namespace="/controller")
 def data():
     iscamerarun = True
+    cur_time_cam =time.time()
+    nex_time_cam = cur_time_cam
     print("on data")
     while iscamerarun:
-        camera.run()
-        imgencode = cv2.imencode('.jpg', camera.image)[1]
-        stringData = base64.b64encode(imgencode).decode('utf-8')
-        b64_src = 'data:image/jpg;base64,'
-        stringData = b64_src + stringData
-        emit("video", {"image" : stringData})
-        if camera.isface :
-            emit("face_data", {"dir_vector" : [camera.dir_vector[0],camera.dir_vector[1],camera.dir_vector[2]], "face_loc" : [camera.face_loc[0],camera.face_loc[1],camera.face_loc[2]]})
-
-    # if( not cam2main.empty):
-    #     print("image")
-    #     imgjson = cam2main.get()
-    #     stat = imgjson["stat"]
-    #     img = imgjson["image"]
-    #     imgencode = cv2.imencode('.jpg', img)[1]
-    #     stringData = base64.b64encode(imgencode).decode('utf-8')
-    #     b64_src = 'data:image/jpg;base64,'
-    #     stringData = b64_src + stringData
-    #     emit("video", {"image" : stringData})
+        cur_time_cam = time.time()
+        if(cur_time_cam > nex_time_cam):
+            camera.run()
+            imgencode = cv2.imencode('.jpg', camera.image)[1]
+            stringData = base64.b64encode(imgencode).decode('utf-8')
+            b64_src = 'data:image/jpg;base64,'
+            stringData = b64_src + stringData
+            emit("video", {"image" : stringData})
+            if camera.isface :
+                emit("face_data", {"dir_vector" : [camera.dir_vector[0],camera.dir_vector[1],camera.dir_vector[2]], "face_loc" : [camera.face_loc[0],camera.face_loc[1],camera.face_loc[2]]})
+            nex_time_cam = cur_time_cam + tickrate
+    return
+        
     
 
 
@@ -119,10 +116,7 @@ def override_url_for():
 
 
 
-
-
-
-
-
 if __name__ == '__main__':
+    
+    print("creating server")
     io.run(app,host='localhost',port=port)
