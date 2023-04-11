@@ -74,10 +74,21 @@ def disconnect():
 def start():
     print("started")
     emit("mainprocess", {"stat" : True})
+    global mode
+    emit("mode",{"mode" : mode})
     # main_process.start()
     # main_p = Process(target=p_controller.process_main, args = (io,stat2main,cam2main,camdata2main))
     # main_p_list.append(main_p)
     # main_p.start()
+
+@io.on("changemod", namespace="/controller")
+def start():
+    global mode
+    if mode == "control":
+        mode = "tracking"
+    else:
+        mode = "control"
+    emit("mode",{"mode" : mode})
     
 @io.on("stop", namespace="/controller")
 def stop():
@@ -119,7 +130,7 @@ def mainprocess():
         
         if command[0] != "" :
             if command[0] == "setmotor" and mode == "control" and cur_time_cam > control_wait:
-                motor_contol.setMotor(command[1])
+                # motor_contol.setMotor(command[1])
                 control_wait = cur_time_cam + 2
                 
             
