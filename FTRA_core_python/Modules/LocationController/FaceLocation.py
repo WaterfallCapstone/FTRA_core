@@ -204,12 +204,12 @@ class FaceLocation6:
                 result = result * (range/length)
                 return result
         else:
-            tmp = calculate_sphere_point_of_contact(face,target, range,height)
+            tmp = self.calculate_sphere_point_of_contact(face,target, range,height)
             if(tmp[1] > 0 and tmp[2] > 0):
                 result = np.array(tmp)
                 return result
             else:
-                tmp = calculate_normal_sphere_intersection(face,target,height)
+                tmp = self.calculate_normal_sphere_intersection(face,target,height)
                 tmp1 = np.array(tmp)
                 result = tmp1 * (math.sqrt((tmp[0] ** 2 + tmp[1] ** 2 + (tmp[2] - height) ** 2)) / length)
                 return result
