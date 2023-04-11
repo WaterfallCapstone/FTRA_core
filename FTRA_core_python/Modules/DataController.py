@@ -126,17 +126,33 @@ class DataController:
     def get_motor_offset_angle(self):
         return self.motor_offset_angle
     
-    def get_armtip_loc_polar(self):
-        return self.armtip_loc_polar
-    
     def get_cam_offset(self):
         return self.camera_offset
     
-    def get_armtip_loc_cart(self):
-        return self.armtip_loc_cart
-    
-    def get_armtip_dir_polar(self):
-        return self.armtip_dir_polar
+    def get_armtip_loc_polar(self, isnumpy = True):
+        if(isnumpy):
+            return self.armtip_loc_polar
+        else:
+            data = [self.armtip_loc_polar[0], np.rad2deg(self.armtip_loc_polar[1]), np.rad2deg(self.armtip_loc_polar[2])]
+            data = list([int(x) for x in data])
+            return data
+        
+    def get_armtip_loc_cart(self, isnumpy = True):
+        if(isnumpy):
+            return self.armtip_loc_cart
+        else:
+            data = [self.armtip_loc_cart[0], self.armtip_loc_cart[1], self.armtip_loc_cart[2]]
+            data = list([int(x) for x in data])
+            return data
+        
+    def get_armtip_dir_polar(self, isnumpy = True):
+        if(isnumpy):
+            return self.armtip_dir_polar
+        else:
+            data = [self.armtip_dir_polar[0], np.rad2deg(self.armtip_dir_polar[1]), np.rad2deg(self.armtip_dir_polar[2])]
+            data = list([int(x) for x in data])
+            return data
+        
     
     def get_camface_loc_polar(self):
         return self.camface_loc_polar

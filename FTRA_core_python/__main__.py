@@ -15,6 +15,7 @@ import time
 import cv2
 import base64
 
+
 OperatingSystem = platform.system()
 env = Settings.env()
 Data = DataController(env)
@@ -131,11 +132,15 @@ def mainprocess():
                 camface_dir = Data.get_camface_dir_cart()
                 camface_loc = Data.get_camface_loc_polar()
                 emit("face_from_cam", {"dir_vector" : [camface_dir[0],camface_dir[1],camface_dir[2]], "face_loc" : [camface_loc[0],camface_loc[1],camface_loc[2]]})
-            
+
                 Data.set_armtip_loc_polar(MotorLocation.cal_armtip_loc_polar())
                 Data.set_armtip_loc_cart(MotorLocation.armtip_loc_polar_to_cart())
                 Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
-                
+                alp_send = Data.get_armtip_loc_polar(False)
+                alc_send = Data.get_armtip_loc_cart(False)
+                adp_send = Data.get_armtip_dir_polar(False)
+                # print(alp_send, alc_send, adp_send)
+                emit("armtip", {"alp" : alp_send, "alc" : alc_send, "adp" : adp_send})
                 
                 
                 if mode == "tracking" :
