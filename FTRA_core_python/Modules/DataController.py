@@ -106,6 +106,9 @@ class DataController:
     def set_image(self,data):
         self.image = data
 
+    def set_motor_value(self,data):
+        self.motor_value = data
+
 
     ###########################################################
     def get_isface(self):
