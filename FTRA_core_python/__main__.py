@@ -42,7 +42,7 @@ isrunning = False
 mode = "control" # tracking / control
 command = ["",[]]
 # motor_contol = Motor.MotorController('COM7', 9600)
-# motor_contol = Motor.MotorController('COM9', 9600)
+motor_contol = Motor.MotorController('COM9', 9600)
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
 
@@ -118,7 +118,7 @@ def setmotorclient(json):
 
     print(new_Motor_Value)
     Data.set_motor_value(new_Motor_Value)
-    # motor_contol.setMotor(command[1])
+    motor_contol.setMotor(command[1])
 
 
 
@@ -130,12 +130,13 @@ def mainprocess():
     nex_time_cam = cur_time_cam
     print("on data")
     control_wait = cur_time_cam
+    tracking_wait = cur_time_cam
     while isrunning:
         cur_time_cam = time.time()
         
         if command[0] != "" :
             if command[0] == "setmotor" and mode == "control" and cur_time_cam > control_wait:
-                # motor_contol.setMotor(command[1])
+                motor_contol.setMotor(command[1])
                 control_wait = cur_time_cam + 2
                 
             
@@ -183,17 +184,13 @@ def mainprocess():
                 arm_length = Data.get_arm_length()
                 dest = FaceLocation.destination(face_loc_cart,face_lookat,arm_length[1]+arm_length[2]-1,arm_length[0])
                 emit("arm_dest", {"arm_dest" : dest.tolist()})
-                
-            if mode == "tracking" :
-                continue
-                    
-                
-                # 
-                # 
-            
-            
             
             nex_time_cam = cur_time_cam + tickrate
+        if mode == "tracking" :
+            if cur_time_cam > tracking_wait:
+                tracking_wait = cur_time_cam + 1
+                #set motor with dest
+                
     print("running done")
     return
         
