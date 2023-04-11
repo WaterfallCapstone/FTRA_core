@@ -112,8 +112,8 @@ def stop():
 
 
 
-@io.on("video", namespace="/controller")
-def video():
+@io.on("mainprocess", namespace="/controller")
+def mainprocess():
     global isrunning
     isrunning = True
     cur_time_cam =time.time()
