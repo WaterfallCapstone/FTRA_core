@@ -42,7 +42,7 @@ isrunning = False
 mode = "control" # tracking / control
 command = ["",[]]
 # motor_contol = Motor.MotorController('COM7', 9600)
-# motor_contol = Motor.MotorController('COM9', 9600)
+motor_contol = Motor.MotorController('COM9', 9600)
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
 
@@ -102,12 +102,12 @@ def stop():
 
 @io.on("setmotorclient", namespace="/controller")
 def setmotorclient(json):
-    old_Motor_Value = Data.get_motor_value(False, True)
+    old_Motor_Value = Data.get_motor_value(True, True)
     new_Motor_Value = old_Motor_Value
     global command
     print(json["data"])
     command[0] = "setmotor"
-    command[1] = json["data"].split(' ')
+    command[1] = np.array(json["data"].split(' '))
     size = len(command[1])
     for i in range(size):
         if(command[1][i].isdigit() and int(command[1][i]) <= 180):
@@ -118,7 +118,7 @@ def setmotorclient(json):
 
     print(new_Motor_Value)
     Data.set_motor_value(new_Motor_Value)
-    motor_contol.setMotor(command[1])
+    #motor_contol.setMotor(command[1])
 
 
 
@@ -196,6 +196,8 @@ def mainprocess():
             if cur_time_cam > tracking_wait:
                 tracking_wait = cur_time_cam + 1
                 #set motor with dest
+                Data.set_motor_value(Data.get_motor_dest(True))
+                motor_contol.setMotor(Data.get_motor_dest(False))
                 
     print("running done")
     return
