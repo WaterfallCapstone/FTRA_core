@@ -111,14 +111,27 @@ class DataController:
     def get_isface(self):
         return self.isface
     
-    def get_motor_value(self, isnumpy = True):
-        if isnumpy:
-            return self.motor_value
+    def get_motor_value(self, isnumpy = True, israd = True):
+        if israd:
+            if isnumpy:
+                return self.motor_value
+            else:
+                motor_data = []
+                for i in self.motor_value:
+                    motor_data.append(i)
+                return motor_data
         else:
-            motor_data = []
-            for i in self.motor_value:
-                motor_data.append(i)
-            return motor_data
+            if isnumpy:
+                value = self.motor_value
+                print(value)
+                for i in range(value.size) :
+                    value[i] = np.rad2deg(value[i])
+                return value
+            else:
+                motor_data = []
+                for i in self.motor_value:
+                    motor_data.append(np.rad2deg(i))
+                return motor_data
     
     def get_arm_length(self):
         return self.arm_length

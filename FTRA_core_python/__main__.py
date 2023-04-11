@@ -23,9 +23,12 @@ MotorLocation = LocationController.MotorLocation(Data)
 if(env.get_config('system','axis') == '4') :
     CamLocation = LocationController.CamLocation4(Data)
     FaceLocation = LocationController.FaceLocation4(Data)
-else :
+elif(env.get_config('system','axis') == '5') :
     CamLocation = LocationController.CamLocation5(Data)
     FaceLocation = LocationController.FaceLocation5(Data)
+else:
+    CamLocation = LocationController.CamLocation6(Data)
+    FaceLocation = LocationController.FaceLocation6(Data)
 
 ########change params and connections
 camera = Camera.FaceCamera(0,Data,"only dir")
@@ -125,7 +128,7 @@ def mainprocess():
             isface = Data.get_isface()
             emit("video", {"image" : stringData, "isface" : isface})
             
-            motorvalue = Data.get_motor_value(False)
+            motorvalue = Data.get_motor_value(False,False)
             emit("motor", {"motorvalue" : motorvalue})
             
             if isface :
@@ -139,16 +142,15 @@ def mainprocess():
                 alp_send = Data.get_armtip_loc_polar(False)
                 alc_send = Data.get_armtip_loc_cart(False)
                 adp_send = Data.get_armtip_dir_polar(False)
-                # print(alp_send, alc_send, adp_send)
                 emit("armtip", {"alp" : alp_send, "alc" : alc_send, "adp" : adp_send})
                 
+                Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
+                Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
                 
                 if mode == "tracking" :
                     continue
                     
-                # Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
-                # Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
-
+                
                 # face_loc_cart, face_lookat = FaceLocation.cal_face_loc()
                 # Data.set_face_loc_cart(face_loc_cart)
                 # Data.set_face_lookat(face_lookat)
