@@ -11,6 +11,7 @@ class DataController:
         self.tickrate = 100
         self.axis = 4
         self.isface = False
+        self.image = ""
 
         self.armtip_loc_polar = np.array([self.arm_length[1] + self.arm_length[2] ,np.pi/2, np.pi/2])
         self.armtip_loc_cart = np.array([0.0,0.0,0.0])
@@ -100,6 +101,8 @@ class DataController:
     def set_camface_dir_cart(self,data):
         self.camface_dir_cart = data
     
+    def set_image(self,data):
+        self.image = data
 
 
     ###########################################################
@@ -139,6 +142,8 @@ class DataController:
     def get_cam_dir_polar(self):
         return self.cam_dir_polar
     
+    def get_image(self):
+        return self.image
 
     
     def print_env(self):

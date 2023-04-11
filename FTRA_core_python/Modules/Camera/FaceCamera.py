@@ -9,7 +9,7 @@ mp_face_mesh = mp.solutions.face_mesh
 import numpy as np
 import os
 import platform
-
+import base64
 
 class FaceCamera:
     def __init__(self, index,data, mode = "dev"):
@@ -238,6 +238,12 @@ class FaceCamera:
                 # self.face_loc = self.get_loc_polar(self.get_face_loc(data))
             else:
                 self.data.set_isface(False)
+            # imgencode = cv2.imencode('.jpg', self.image)[1]
+            # stringData = base64.b64encode(imgencode).decode('utf-8')
+            # b64_src = 'data:image/jpg;base64,'
+            # stringData = b64_src + stringData
+            # self.data.set_image(stringData)
+            
             #     img_q.put({"stat" : True, "image" : self.image})
             #     data_q.put({"dir_vector":self.dir_vector, "face_loc":self.face_loc})
             # else:

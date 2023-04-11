@@ -27,21 +27,47 @@ else :
     FaceLocation = LocationController.FaceLocation5(Data)
 
 ########change params and connections
-camera = Camera.FaceCamera(1,Data,"only dir")
+camera = Camera.FaceCamera(0,Data,"only dir")
 data_service = LocationController.DataService("rpf511")
 # cameracontroller.run_dev()
 p_controller = ProcessController.ProcessController()
 
-stat2main = Queue()
 
-stat2cam = Queue()
-cam2main = Queue()
-camdata2main = Queue()
 
 isrunning = False
+command = ""
 
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
+
+
+# def process_main(q_in, q_out):
+#     global isrunning, Data, tickrate
+#     isrunning = True
+#     cur_time_cam =time.time()
+#     nex_time_cam = cur_time_cam
+#     print("on data")
+#     while isrunning:
+#         cur_time_cam = time.time()
+#         if(not q_in.empty()):
+#             q_data = q_in.get()
+#             command = q_data["command"]
+#             if(command == "stop"):
+#                 isrunning = False
+#             if(command == "image"):
+#                 print("onimage")
+#                 q_out.put({"image" : Data.get_image(), "isface" : Data.get_isface()})
+        
+#         if(cur_time_cam > nex_time_cam):
+#             camera.run()
+            
+#             nex_time_cam = cur_time_cam + tickrate
+#     return
+
+# q_in = Queue()
+# q_out = Queue()
+# main_process = Process(target=process_main, args=(q_in,q_out))
+
 
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -70,17 +96,20 @@ def disconnect():
 def start():
     print("started")
     emit("mainprocess", {"stat" : True})
-    # cam_p.start()
+    # main_process.start()
     # main_p = Process(target=p_controller.process_main, args = (io,stat2main,cam2main,camdata2main))
     # main_p_list.append(main_p)
     # main_p.start()
     
 @io.on("stop", namespace="/controller")
-def start():
+def stop():
     print("stop")
     emit("mainprocess", {"stat" : False})
     global isrunning
     isrunning = False
+    # global q_in
+    # q_in.put({"command" : "stop"})
+
 
 
 @io.on("video", namespace="/controller")
@@ -110,12 +139,24 @@ def video():
             emit("motor", {"motorvalue" : data})
             
             nex_time_cam = cur_time_cam + tickrate
+    print("running done")
     return
         
 
 
 
-
+# @io.on("image", namespace="/controller")
+# def image():
+#     global q_in, q_out
+#     q_in.put({"command" : "image"})
+#     while True:
+#         if(not q_out.empty()):
+#             print("yes queue")
+#             imagedata = q_out.get()
+#             emit("video", imagedata)
+#             break
+#         else:
+#             print("no queue")
 
 def dated_url_for(endpoint, **values):
     if endpoint == 'static':
