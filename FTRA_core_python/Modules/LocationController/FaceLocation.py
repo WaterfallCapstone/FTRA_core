@@ -221,6 +221,8 @@ class FaceLocation6:
         lookat_cart = face_loc_cart - dest
         
         roll = np.arctan(dest[1] / dest[0])
+        if roll < 0:
+            result[0] = np.pi + roll
         roll_matrix = np.array(
             [
                 [np.cos(-roll), -np.sin(-roll), 0, 0],
@@ -233,8 +235,7 @@ class FaceLocation6:
         lookat_xbase = roll_matrix @ np.append(lookat_cart,0.0)
         
         result[0] = roll
-        if roll < 0:
-            result[0] = np.pi + roll
+        
         
         
         a_len = arm_length[1]
