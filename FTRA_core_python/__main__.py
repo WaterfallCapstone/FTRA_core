@@ -146,6 +146,10 @@ def mainprocess():
                 
                 Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
                 Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
+                cam_loc = Data.get_cam_loc_cart(False)
+                cam_dir = Data.get_cam_dir_polar(False)
+                emit("camdata", {"camloc" : cam_loc, "camdir" : cam_dir})
+                
                 
                 if mode == "tracking" :
                     continue

@@ -58,10 +58,6 @@ class FaceLocation4:
         return self.face_trans[:3], self.face_dir_trans[:3]
 
 
-
-
-
-
 class FaceLocation5:
     def __init__(self,data):
         self.data = data
@@ -70,6 +66,7 @@ class FaceLocation5:
 
         self.face_rot = np.array([0.0,0.0,0.0,0.0])
         self.face_dir_rot = np.array([0.0,0.0,0.0,0.0])
+        
         
 class FaceLocation6:
     def __init__(self,data):

@@ -123,7 +123,7 @@ class DataController:
         else:
             if isnumpy:
                 value = self.motor_value
-                print(value)
+                # print(value)
                 for i in range(value.size) :
                     value[i] = np.rad2deg(value[i])
                 return value
@@ -147,7 +147,7 @@ class DataController:
             return self.armtip_loc_polar
         else:
             data = [self.armtip_loc_polar[0], np.rad2deg(self.armtip_loc_polar[1]), np.rad2deg(self.armtip_loc_polar[2])]
-            data = list([int(x) for x in data])
+            data = list([float(x) for x in data])
             return data
         
     def get_armtip_loc_cart(self, isnumpy = True):
@@ -155,7 +155,7 @@ class DataController:
             return self.armtip_loc_cart
         else:
             data = [self.armtip_loc_cart[0], self.armtip_loc_cart[1], self.armtip_loc_cart[2]]
-            data = list([int(x) for x in data])
+            data = list([float(x) for x in data])
             return data
         
     def get_armtip_dir_polar(self, isnumpy = True):
@@ -163,7 +163,7 @@ class DataController:
             return self.armtip_dir_polar
         else:
             data = [self.armtip_dir_polar[0], np.rad2deg(self.armtip_dir_polar[1]), np.rad2deg(self.armtip_dir_polar[2])]
-            data = list([int(x) for x in data])
+            data = list([float(x) for x in data])
             return data
         
     
@@ -173,11 +173,22 @@ class DataController:
     def get_camface_dir_cart(self):
         return self.camface_dir_cart
     
-    def get_cam_loc_cart(self):
-        return self.cam_loc_cart
+    def get_cam_loc_cart(self,isnumpy = True):
+        if(isnumpy):
+            return self.cam_loc_cart
+        else:
+            data = [self.cam_loc_cart[0], self.cam_loc_cart[1], self.cam_loc_cart[2]]
+            data = list([float(x) for x in data])
+            return data
+        
     
-    def get_cam_dir_polar(self):
-        return self.cam_dir_polar
+    def get_cam_dir_polar(self,isnumpy = True):
+        if(isnumpy):
+            return self.cam_dir_polar
+        else:
+            data = [self.cam_dir_polar[0], np.rad2deg(self.cam_dir_polar[1]), np.rad2deg(self.cam_dir_polar[2])]
+            data = list([float(x) for x in data])
+            return data
     
     def get_image(self):
         return self.image
