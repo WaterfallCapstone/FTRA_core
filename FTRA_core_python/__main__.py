@@ -179,9 +179,13 @@ def mainprocess():
                 Data.set_face_loc_cart(face_loc_cart)
                 Data.set_face_lookat(face_lookat)
                 emit("face_location" , {"faceloc":face_loc_cart.tolist(), "lookat" :face_lookat.tolist()})
+
+                arm_length = Data.get_arm_length()
+                dest = FaceLocation.destination(face_loc_cart,face_lookat,arm_length[1]+arm_length[2]-1,arm_length[0])
+                emit("arm_dest", {"arm_dest" : dest.tolist()})
                 
-                if mode == "tracking" :
-                    continue
+            if mode == "tracking" :
+                continue
                     
                 
                 # 
