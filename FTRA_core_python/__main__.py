@@ -110,6 +110,10 @@ def stop():
     # global q_in
     # q_in.put({"command" : "stop"})
 
+@io.on("setmotorclient", namespace="/controller")
+def setmotorclient(json):
+    print(json["data"])
+
 
 
 @io.on("mainprocess", namespace="/controller")
