@@ -10,6 +10,7 @@ class DataController:
         self.destination_distance = 0.0
         self.tickrate = 100
         self.axis = 4
+        self.isface = False
 
         self.armtip_loc_polar = np.array([self.arm_length[1] + self.arm_length[2] ,np.pi/2, np.pi/2])
         self.armtip_loc_cart = np.array([0.0,0.0,0.0])
@@ -66,6 +67,9 @@ class DataController:
         self.tickrate = int(config['system']['tickrate'])
         self.axis = int(config['system']['axis'])
     #############################################################
+    def set_isface(self,data):
+        self.isface = data
+
     def set_armtip_loc_polar(self,data):
         self.armtip_loc_polar = data
     
@@ -93,9 +97,15 @@ class DataController:
     def set_camface_loc_polar(self,data):
         self.camface_loc_polar = data
     
+    def set_camface_dir_cart(self,data):
+        self.camface_dir_cart = data
+    
 
 
     ###########################################################
+    def get_isface(self):
+        return self.isface
+    
     def get_motor_value(self):
         return self.motor_value
     

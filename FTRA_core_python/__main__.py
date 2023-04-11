@@ -27,7 +27,7 @@ else :
     FaceLocation = LocationController.FaceLocation5(Data)
 
 ########change params and connections
-camera = Camera.FaceCamera(0,"only dir")
+camera = Camera.FaceCamera(1,Data,"only dir")
 data_service = LocationController.DataService("rpf511")
 # cameracontroller.run_dev()
 p_controller = ProcessController.ProcessController()
@@ -38,8 +38,7 @@ stat2cam = Queue()
 cam2main = Queue()
 camdata2main = Queue()
 
-iscamerarun = False
-
+isrunning = False
 
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
@@ -80,18 +79,18 @@ def start():
 def start():
     print("stop")
     emit("mainprocess", {"stat" : False})
-    global iscamerarun
-    iscamerarun = False
+    global isrunning
+    isrunning = False
 
 
 @io.on("video", namespace="/controller")
-def data():
-    global iscamerarun
-    iscamerarun = True
+def video():
+    global isrunning
+    isrunning = True
     cur_time_cam =time.time()
     nex_time_cam = cur_time_cam
     print("on data")
-    while iscamerarun:
+    while isrunning:
         cur_time_cam = time.time()
         if(cur_time_cam > nex_time_cam):
             camera.run()
@@ -99,13 +98,21 @@ def data():
             stringData = base64.b64encode(imgencode).decode('utf-8')
             b64_src = 'data:image/jpg;base64,'
             stringData = b64_src + stringData
-            emit("video", {"image" : stringData, "isface" : camera.isface})
-            if camera.isface :
-                emit("face_from_cam", {"dir_vector" : [camera.dir_vector[0],camera.dir_vector[1],camera.dir_vector[2]], "face_loc" : [camera.face_loc[0],camera.face_loc[1],camera.face_loc[2]]})
+            isface = Data.get_isface()
+            emit("video", {"image" : stringData, "isface" : isface})
+            if isface :
+                camface_dir = Data.get_camface_dir_cart()
+                camface_loc = Data.get_camface_loc_polar()
+                emit("face_from_cam", {"dir_vector" : [camface_dir[0],camface_dir[1],camface_dir[2]], "face_loc" : [camface_loc[0],camface_loc[1],camface_loc[2]]})
+            
+            
+            data =[np.random.randint(0,10),np.random.randint(0,10),np.random.randint(0,10),np.random.randint(0,10),np.random.randint(0,10)]
+            emit("motor", {"motorvalue" : data})
+            
             nex_time_cam = cur_time_cam + tickrate
     return
         
-    
+
 
 
 

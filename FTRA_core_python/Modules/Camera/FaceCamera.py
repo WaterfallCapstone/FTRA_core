@@ -12,7 +12,8 @@ import platform
 
 
 class FaceCamera:
-    def __init__(self, index, mode = "dev"):
+    def __init__(self, index,data, mode = "dev"):
+        self.data = data
         self.cap = cv2.VideoCapture(index)
         self.face_mesh = mp_face_mesh.FaceMesh(
             max_num_faces=1,
@@ -25,7 +26,7 @@ class FaceCamera:
         self.success, self.image = self.cap.read()
         # self.results = self.face_mesh.process(self.image)
         self.results = None
-        self.loop = 0
+        # self.loop = 0
         self.dir_vector = np.array([0.0,0.0,0.0])
         self.dir_state = 0
         self.mode = mode
@@ -43,7 +44,6 @@ class FaceCamera:
 
         self.mp_face_width = -1
         # self.distance = 50
-        self.isface =False
         
     def camera_update(self):
         self.success, self.image = self.cap.read()
@@ -230,12 +230,14 @@ class FaceCamera:
             # else:
             #     os.system('clear')
             if self.results.multi_face_landmarks:
-                self.isface = True
+                self.data.set_isface(True)
                 data = self.get_data()
-                self.dir_vector = self.calculate_face_dir_vector(data)
-                self.face_loc = self.get_loc_polar(self.get_face_loc(data))
+                self.data.set_camface_dir_cart(self.calculate_face_dir_vector(data))
+                self.data.set_camface_loc_polar(self.get_loc_polar(self.get_face_loc(data)))
+                # self.dir_vector = self.calculate_face_dir_vector(data)
+                # self.face_loc = self.get_loc_polar(self.get_face_loc(data))
             else:
-                self.isface = False
+                self.data.set_isface(False)
             #     img_q.put({"stat" : True, "image" : self.image})
             #     data_q.put({"dir_vector":self.dir_vector, "face_loc":self.face_loc})
             # else:
@@ -251,7 +253,7 @@ class FaceCamera:
 #                 print("face loc   "+str(self.face_loc))
                 
                 
-            self.loop+=1
+            # self.loop+=1
             # if cv2.waitKey(5) & 0xFF == 27:
             #     break
         
