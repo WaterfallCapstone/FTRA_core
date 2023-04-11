@@ -70,14 +70,23 @@ def disconnect():
 @io.on("start", namespace="/controller")
 def start():
     print("started")
+    emit("mainprocess", {"stat" : True})
     # cam_p.start()
     # main_p = Process(target=p_controller.process_main, args = (io,stat2main,cam2main,camdata2main))
     # main_p_list.append(main_p)
     # main_p.start()
-    emit("started")
+    
+@io.on("stop", namespace="/controller")
+def start():
+    print("stop")
+    emit("mainprocess", {"stat" : False})
+    global iscamerarun
+    iscamerarun = False
+
 
 @io.on("video", namespace="/controller")
 def data():
+    global iscamerarun
     iscamerarun = True
     cur_time_cam =time.time()
     nex_time_cam = cur_time_cam
