@@ -41,7 +41,7 @@ p_controller = ProcessController.ProcessController()
 isrunning = False
 mode = "control" # tracking / control
 command = ["",[]]
-motor_contol = Motor.MotorController('COM7', 9600)
+# motor_contol = Motor.MotorController('COM7', 9600)
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
 
