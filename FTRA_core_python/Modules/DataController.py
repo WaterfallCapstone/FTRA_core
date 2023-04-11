@@ -3,7 +3,7 @@ import numpy as np
 class DataController:
     def __init__(self,env):
         self.env = env
-        self.arm_length = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+        self.arm_length = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0])
         self.camera_offset = np.array([0.0,0.0])
         self.motor_offset_angle = np.pi
         self.motor_value = np.array([0.0,0.0,0.0,0.0,0.0])
@@ -49,9 +49,10 @@ class DataController:
         self.arm_length[0] = float(config['arm_length']['base_height'])
         self.arm_length[1] = float(config['arm_length']['arm_1'])
         self.arm_length[2] = float(config['arm_length']['arm_2'])
-        self.arm_length[3] = float(config['arm_length']['arm_rot'])
-        self.arm_length[4] = float(config['arm_length']['arm_cam_hor'])
-        self.arm_length[5] = float(config['arm_length']['arm_cam_ver'])
+        self.arm_length[3] = float(config['arm_length']['arm_3'])
+        self.arm_length[4] = float(config['arm_length']['arm_4'])
+        self.arm_length[5] = float(config['arm_length']['arm_5'])
+        self.arm_length[6] = float(config['arm_length']['arm_6'])
 
         self.camera_offset = np.array([float(config['cam_offset']['hor']),float(config['cam_offset']['ver'])])
 

@@ -85,6 +85,32 @@ while cameracontroller.camera.cap.isOpened():
 
 
 
+# def process_main(q_in, q_out):
+#     global isrunning, Data, tickrate
+#     isrunning = True
+#     cur_time_cam =time.time()
+#     nex_time_cam = cur_time_cam
+#     print("on data")
+#     while isrunning:
+#         cur_time_cam = time.time()
+#         if(not q_in.empty()):
+#             q_data = q_in.get()
+#             command = q_data["command"]
+#             if(command == "stop"):
+#                 isrunning = False
+#             if(command == "image"):
+#                 print("onimage")
+#                 q_out.put({"image" : Data.get_image(), "isface" : Data.get_isface()})
+        
+#         if(cur_time_cam > nex_time_cam):
+#             camera.run()
+            
+#             nex_time_cam = cur_time_cam + tickrate
+#     return
+
+# q_in = Queue()
+# q_out = Queue()
+# main_process = Process(target=process_main, args=(q_in,q_out))
 
 
 
