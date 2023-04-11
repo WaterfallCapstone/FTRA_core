@@ -6,7 +6,7 @@ class DataController:
         self.arm_length = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0])
         self.camera_offset = np.array([0.0,0.0])
         self.motor_offset_angle = np.pi
-        self.motor_value = np.array([0.0,0.0,0.0,0.0,0.0])
+        self.motor_value = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
         self.destination_distance = 0.0
         self.tickrate = 100
         self.axis = 4
@@ -63,6 +63,7 @@ class DataController:
         self.motor_value[2] = np.pi * self.str_to_fraction(config['motor']['default_2']) - self.motor_offset_angle
         self.motor_value[3] = np.pi * self.str_to_fraction(config['motor']['default_3'])
         self.motor_value[4] = np.pi * self.str_to_fraction(config['motor']['default_4'])
+        self.motor_value[5] = np.pi * self.str_to_fraction(config['motor']['default_5'])
         
         self.destination_distance = float(config['destination']['distance'])
 
@@ -110,8 +111,14 @@ class DataController:
     def get_isface(self):
         return self.isface
     
-    def get_motor_value(self):
-        return self.motor_value
+    def get_motor_value(self, isnumpy = True):
+        if isnumpy:
+            return self.motor_value
+        else:
+            motor_data = []
+            for i in self.motor_value:
+                motor_data.append(i)
+            return motor_data
     
     def get_arm_length(self):
         return self.arm_length

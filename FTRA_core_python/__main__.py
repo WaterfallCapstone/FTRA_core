@@ -18,7 +18,7 @@ import base64
 OperatingSystem = platform.system()
 env = Settings.env()
 Data = DataController(env)
-MotorLocation = Motor.MotorLocation(Data)
+MotorLocation = LocationController.MotorLocation(Data)
 if(env.get_config('system','axis') == '4') :
     CamLocation = LocationController.CamLocation4(Data)
     FaceLocation = LocationController.FaceLocation4(Data)
@@ -40,33 +40,6 @@ command = ""
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
 
-
-# def process_main(q_in, q_out):
-#     global isrunning, Data, tickrate
-#     isrunning = True
-#     cur_time_cam =time.time()
-#     nex_time_cam = cur_time_cam
-#     print("on data")
-#     while isrunning:
-#         cur_time_cam = time.time()
-#         if(not q_in.empty()):
-#             q_data = q_in.get()
-#             command = q_data["command"]
-#             if(command == "stop"):
-#                 isrunning = False
-#             if(command == "image"):
-#                 print("onimage")
-#                 q_out.put({"image" : Data.get_image(), "isface" : Data.get_isface()})
-        
-#         if(cur_time_cam > nex_time_cam):
-#             camera.run()
-            
-#             nex_time_cam = cur_time_cam + tickrate
-#     return
-
-# q_in = Queue()
-# q_out = Queue()
-# main_process = Process(target=process_main, args=(q_in,q_out))
 
 
 
@@ -133,14 +106,28 @@ def mainprocess():
             stringData = b64_src + stringData
             isface = Data.get_isface()
             emit("video", {"image" : stringData, "isface" : isface})
+            
+            motorvalue = Data.get_motor_value(False)
+            emit("motor", {"motorvalue" : motorvalue})
+            
             if isface :
                 camface_dir = Data.get_camface_dir_cart()
                 camface_loc = Data.get_camface_loc_polar()
                 emit("face_from_cam", {"dir_vector" : [camface_dir[0],camface_dir[1],camface_dir[2]], "face_loc" : [camface_loc[0],camface_loc[1],camface_loc[2]]})
             
+                Data.set_armtip_loc_polar(MotorLocation.cal_armtip_loc_polar())
+                Data.set_armtip_loc_cart(MotorLocation.armtip_loc_polar_to_cart())
+                Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
+                
+                
+                # Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
+                # Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
+
+                # face_loc_cart, face_lookat = FaceLocation.cal_face_loc()
+                # Data.set_face_loc_cart(face_loc_cart)
+                # Data.set_face_lookat(face_lookat)
             
-            data =[np.random.randint(0,10),np.random.randint(0,10),np.random.randint(0,10),np.random.randint(0,10),np.random.randint(0,10)]
-            emit("motor", {"motorvalue" : data})
+            
             
             nex_time_cam = cur_time_cam + tickrate
     print("running done")
