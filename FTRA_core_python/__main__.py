@@ -42,7 +42,7 @@ isrunning = False
 mode = "control" # tracking / control
 command = ["",[]]
 # motor_contol = Motor.MotorController('COM7', 9600)
-motor_contol = Motor.MotorController('COM9', 9600)
+# motor_contol = Motor.MotorController('COM9', 9600)
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
 
@@ -118,7 +118,7 @@ def setmotorclient(json):
 
     print(new_Motor_Value)
     Data.set_motor_value(new_Motor_Value)
-    motor_contol.setMotor(command[1])
+    # motor_contol.setMotor(command[1])
 
 
 
@@ -135,7 +135,7 @@ def mainprocess():
         
         if command[0] != "" :
             if command[0] == "setmotor" and mode == "control" and cur_time_cam > control_wait:
-                motor_contol.setMotor(command[1])
+                # motor_contol.setMotor(command[1])
                 control_wait = cur_time_cam + 2
                 
             
@@ -159,28 +159,33 @@ def mainprocess():
                 camface_loc = Data.get_camface_loc_polar()
                 emit("face_from_cam", {"dir_vector" : [camface_dir[0],camface_dir[1],camface_dir[2]], "face_loc" : [camface_loc[0],camface_loc[1],camface_loc[2]]})
 
-                Data.set_armtip_loc_polar(MotorLocation.cal_armtip_loc_polar())
-                Data.set_armtip_loc_cart(MotorLocation.armtip_loc_polar_to_cart())
-                Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
-                alp_send = Data.get_armtip_loc_polar(False)
-                alc_send = Data.get_armtip_loc_cart(False)
-                adp_send = Data.get_armtip_dir_polar(False)
-                emit("armtip", {"alp" : alp_send, "alc" : alc_send, "adp" : adp_send})
+            Data.set_armtip_loc_polar(MotorLocation.cal_armtip_loc_polar())
+            Data.set_armtip_loc_cart(MotorLocation.armtip_loc_polar_to_cart())
+            Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
+            alp_send = Data.get_armtip_loc_polar(False)
+            alc_send = Data.get_armtip_loc_cart(False)
+            adp_send = Data.get_armtip_dir_polar(False)
+            emit("armtip", {"alp" : alp_send, "alc" : alc_send, "adp" : adp_send})
                 
-                Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
-                Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
-                cam_loc = Data.get_cam_loc_cart(False)
-                cam_dir = Data.get_cam_dir_polar(False)
-                emit("camdata", {"camloc" : cam_loc, "camdir" : cam_dir})
+            
+            Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
+            Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
+            cam_loc = Data.get_cam_loc_cart(False)
+            cam_dir = Data.get_cam_dir_polar(False)
+            emit("camdata", {"camloc" : cam_loc, "camdir" : cam_dir})
                 
+            if isface:
+                face_loc_cart, face_lookat = FaceLocation.cal_face_loc()
+                Data.set_face_loc_cart(face_loc_cart)
+                Data.set_face_lookat(face_lookat)
+                emit("face_location" , {"faceloc":face_loc_cart.tolist(), "lookat" :face_lookat.tolist()})
                 
                 if mode == "tracking" :
                     continue
                     
                 
-                # face_loc_cart, face_lookat = FaceLocation.cal_face_loc()
-                # Data.set_face_loc_cart(face_loc_cart)
-                # Data.set_face_lookat(face_lookat)
+                # 
+                # 
             
             
             

@@ -123,7 +123,7 @@ class FaceCamera:
         temp = self.get_loc_cart(data)
         # cm / let distance is 50
         # print(temp)
-        return np.array([50, np.arctan(temp[1] / 1.166666667), 1.5708 - np.arctan(temp[2] / 1.25)])
+        return np.array([70,1.5708 - np.arctan(temp[2] / 1.25), np.arctan(temp[1] / 1.166666667) ])
     
 
     def get_face_loc(self,data):

@@ -21,7 +21,7 @@ class DataController:
         self.cam_loc_cart = np.array([0.0,0.0,0.0])
         self.cam_dir_polar = np.array([1.0,0.0,0.0])
 
-        self.camface_loc_polar = np.array([50.0, 0.0, np.pi / 2])
+        self.camface_loc_polar = np.array([70.0, 0.0, np.pi / 2])
         self.camface_dir_cart = np.array([0.0, 0.0, 0.0])
 
         self.face_loc_cart = np.array([0.0, 0.0, 0.0])
@@ -196,6 +196,8 @@ class DataController:
     def get_image(self):
         return self.image
 
+    def get_destination_distance(self):
+        return self.destination_distance
     
     def print_env(self):
         print("default arm_length           : ",self.arm_length)
