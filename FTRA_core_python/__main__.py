@@ -35,7 +35,8 @@ p_controller = ProcessController.ProcessController()
 
 
 isrunning = False
-command = ""
+mode = "control" # tracking / control
+command = ["",[]]
 
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
@@ -85,19 +86,35 @@ def stop():
 
 @io.on("setmotorclient", namespace="/controller")
 def setmotorclient(json):
+    global command
     print(json["data"])
+    command[0] = "setmotor"
+    command[1] = []
 
 
 
 @io.on("mainprocess", namespace="/controller")
 def mainprocess():
-    global isrunning
+    global isrunning, command, mode
     isrunning = True
     cur_time_cam =time.time()
     nex_time_cam = cur_time_cam
     print("on data")
+    control_wait = cur_time_cam
     while isrunning:
         cur_time_cam = time.time()
+        
+        if command[0] != "" :
+            if command[0] == "setmotor" and mode == "control" and cur_time_cam > control_wait:
+                motorvalue = command[1]
+
+                
+                control_wait = cur_time_cam + 2
+                
+            
+            command[0] = ""
+            command[1] = []
+        
         if(cur_time_cam > nex_time_cam):
             camera.run()
             imgencode = cv2.imencode('.jpg', camera.image)[1]
@@ -120,6 +137,10 @@ def mainprocess():
                 Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
                 
                 
+                
+                if mode == "tracking" :
+                    continue
+                    
                 # Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
                 # Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
 
