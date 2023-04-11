@@ -213,4 +213,56 @@ class FaceLocation6:
                 tmp1 = np.array(tmp)
                 result = tmp1 * (math.sqrt((tmp[0] ** 2 + tmp[1] ** 2 + (tmp[2] - height) ** 2)) / length)
                 return result
-            
+    
+    def calc_dest_arm(self, dest):
+        result =np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+        face_loc_cart = self.data.get_face_loc_cart()
+        arm_length = self.data.get_arm_length()
+        lookat_cart = face_loc_cart - dest
+        
+        roll = np.arctan(dest[1] / dest[0])
+        roll_matrix = np.array(
+            [
+                [np.cos(-roll), -np.sin(-roll), 0, 0],
+                [np.sin(-roll), np.cos(-roll), 0, 0],
+                [0,0,1,0],
+                [0,0,0,1]
+            ]
+        )
+        
+        lookat_xbase = roll_matrix @ np.append(lookat_cart,0.0)
+        
+        result[0] = roll
+        if roll < 0:
+            result[0] = np.pi + roll
+        
+        
+        a_len = arm_length[1]
+        b_len = arm_length[2]
+        c_len = np.sqrt(np.square(dest[0])+np.square(dest[1])+np.square(dest[2]))
+        
+        
+        angle_ac = np.arccos((np.square(a_len)+np.square(c_len)-np.square(b_len)) / (2 * a_len * c_len))
+        
+        angle_dest = np.arccos(np.sqrt( np.square(dest[0]) + np.square(dest[1]) ) / c_len)
+        # print(c_len / np.sqrt( np.square(dest[0]) + np.square(dest[1]) ))
+        # print(angle_dest)
+        result[1] = np.pi - angle_ac - angle_dest
+        
+        angle_ab = np.arccos((np.square(a_len)+np.square(b_len)-np.square(c_len)) / (2 * a_len * b_len))
+        
+        result[2] = (3/2) * np.pi - self.data.get_motor_offset_angle() - angle_ab
+        
+        result[3] = np.pi/2 + angle_ab - result[1]
+        
+        result[4] = np.pi/2 + np.arctan(lookat_xbase[1] / lookat_xbase[0])
+        
+        look_len = np.sqrt(np.square(lookat_xbase[0])+np.square(lookat_xbase[1])+np.square(lookat_xbase[2]))
+        
+        result[5] = np.pi - np.arccos(lookat_xbase[2]/look_len)
+        # print(result)
+        
+        return result
+        
+        
+        

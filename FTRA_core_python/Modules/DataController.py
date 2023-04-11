@@ -7,6 +7,7 @@ class DataController:
         self.camera_offset = np.array([0.0,0.0])
         self.motor_offset_angle = np.pi
         self.motor_value = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+        self.motor_dest = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
         self.destination_distance = 0.0
         self.tickrate = 100
         self.axis = 4
@@ -108,6 +109,9 @@ class DataController:
 
     def set_motor_value(self,data):
         self.motor_value = data
+        
+    def set_motor_dest(self,data):
+        self.motor_dest = data
 
 
     ###########################################################
@@ -183,7 +187,9 @@ class DataController:
             data = [self.cam_loc_cart[0], self.cam_loc_cart[1], self.cam_loc_cart[2]]
             data = list([float(x) for x in data])
             return data
-        
+    
+    def get_face_loc_cart(self):
+        return self.face_loc_cart
     
     def get_cam_dir_polar(self,isnumpy = True):
         if(isnumpy):
@@ -198,6 +204,16 @@ class DataController:
 
     def get_destination_distance(self):
         return self.destination_distance
+
+    def get_motor_dest(self, israd = True):
+        if israd:
+            return self.motor_dest
+        else:
+            motor_dest = []
+            for i in self.motor_dest:
+                motor_dest.append(np.rad2deg(i))
+            return np.array(motor_dest)
+            
     
     def print_env(self):
         print("default arm_length           : ",self.arm_length)
