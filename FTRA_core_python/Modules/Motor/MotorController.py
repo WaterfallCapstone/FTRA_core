@@ -1,14 +1,18 @@
+import serial
+
 class MotorController:
-    def __init__(self, env):
-        self.env = env
-    
-    def printenv(self):
-        print(self.env.hello)
+    def __init__(self, port, baudrate):
+        self.py_serial = serial.Serial(
+            port = port,
+            baudrate = baudrate
+        )
 
-    def changeenv(self,data):
-        self.env.sethello(data)
+    def arrToString(self, command):
+        ret = ' '.join(command)
+        return ret
 
-    def printhello(self):
-        print(self.env.gethello())
+    def setMotor(self, command):
+        ret = self.arrToString(command)
+        self.py_serial.write(ret.encode())
         
     
