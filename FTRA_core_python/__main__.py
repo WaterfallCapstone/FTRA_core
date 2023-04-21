@@ -31,7 +31,17 @@ else:
     FaceLocation = LocationController.FaceLocation6(Data)
 
 ########change params and connections
-camera = Camera.FaceCamera(0,Data,"only dir")
+if(OperatingSystem == "Windows"):
+    motor_contol = Motor.MotorController('COM9', 9600)
+    camera = Camera.FaceCamera(0,Data,"only dir")
+elif(OperatingSystem == "Darwin"):
+    #motor_contol = Motor.MotorController('/dev/cu.Bluetooth-Incoming-Port', 9600)
+    camera = Camera.FaceCamera(0,Data,"only dir")
+else:
+    #motor_contol = Motor.MotorController('/dev/ttyUSB0', 9600)
+    camera = Camera.FaceCamera(1,Data,"only dir")
+
+#camera = Camera.FaceCamera(0,Data,"only dir")
 data_service = LocationController.DataService("rpf511")
 # cameracontroller.run_dev()
 p_controller = ProcessController.ProcessController()
@@ -42,7 +52,7 @@ isrunning = False
 mode = "control" # tracking / control
 command = ["",[]]
 # motor_contol = Motor.MotorController('COM7', 9600)
-motor_contol = Motor.MotorController('COM9', 9600)
+# motor_contol = Motor.MotorController('COM9', 9600)
 port = 4000
 tickrate = float(env.get_config('system','tickrate')) / 1000
 
