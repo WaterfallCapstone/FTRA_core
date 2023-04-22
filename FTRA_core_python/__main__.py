@@ -32,8 +32,8 @@ else:
 
 ########change params and connections
 if(OperatingSystem == "Windows"):
-    motor_contol = Motor.MotorController('COM9', 9600)
-    camera = Camera.FaceCamera(0,Data,"only dir")
+    motor_contol = Motor.MotorController('COM7', 9600)
+    camera = Camera.FaceCamera(1,Data,"only dir")
 elif(OperatingSystem == "Darwin"):
     #motor_contol = Motor.MotorController('/dev/cu.Bluetooth-Incoming-Port', 9600)
     camera = Camera.FaceCamera(0,Data,"only dir")
@@ -171,20 +171,20 @@ def mainprocess():
                 camface_loc = Data.get_camface_loc_polar()
                 emit("face_from_cam", {"dir_vector" : [camface_dir[0],camface_dir[1],camface_dir[2]], "face_loc" : [camface_loc[0],camface_loc[1],camface_loc[2]]})
 
-            Data.set_armtip_loc_polar(MotorLocation.cal_armtip_loc_polar())
-            Data.set_armtip_loc_cart(MotorLocation.armtip_loc_polar_to_cart())
-            Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
-            alp_send = Data.get_armtip_loc_polar(False)
-            alc_send = Data.get_armtip_loc_cart(False)
-            adp_send = Data.get_armtip_dir_polar(False)
-            emit("armtip", {"alp" : alp_send, "alc" : alc_send, "adp" : adp_send})
+                Data.set_armtip_loc_polar(MotorLocation.cal_armtip_loc_polar())
+                Data.set_armtip_loc_cart(MotorLocation.armtip_loc_polar_to_cart())
+                Data.set_armtip_dir_polar(MotorLocation.cal_armtip_dir_polar())
+                alp_send = Data.get_armtip_loc_polar(False)
+                alc_send = Data.get_armtip_loc_cart(False)
+                adp_send = Data.get_armtip_dir_polar(False)
+                emit("armtip", {"alp" : alp_send, "alc" : alc_send, "adp" : adp_send})
+                    
                 
-            
-            Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
-            Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
-            cam_loc = Data.get_cam_loc_cart(False)
-            cam_dir = Data.get_cam_dir_polar(False)
-            emit("camdata", {"camloc" : cam_loc, "camdir" : cam_dir})
+                Data.set_cam_loc_cart(CamLocation.cal_cam_loc_cart())
+                Data.set_cam_dir_polar(CamLocation.cal_cam_dir_polar())
+                cam_loc = Data.get_cam_loc_cart(False)
+                cam_dir = Data.get_cam_dir_polar(False)
+                emit("camdata", {"camloc" : cam_loc, "camdir" : cam_dir})
                 
             if isface:
                 face_loc_cart, face_lookat = FaceLocation.cal_face_loc()
