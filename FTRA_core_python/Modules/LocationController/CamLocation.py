@@ -163,6 +163,7 @@ class CamLocation6:
         
         after_roll = armtip_roll_matrix @ (roll_matrix @ (yaw_matrix @ base))
         result = np.array([1,0.0,0.0])       
-        result[1] = np.arccos(after_roll[2])
+        if after_roll[2] >= -1 and after_roll[2] <= 1:
+            result[1] = np.arccos(after_roll[2])
         result[2] = np.arctan(after_roll[1]/after_roll[0])
         return result

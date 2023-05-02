@@ -242,27 +242,34 @@ class FaceLocation6:
         b_len = arm_length[2]
         c_len = np.sqrt(np.square(dest[0])+np.square(dest[1])+np.square(dest[2]))
         
-        
-        angle_ac = np.arccos((np.square(a_len)+np.square(c_len)-np.square(b_len)) / (2 * a_len * c_len))
-        
-        angle_dest = np.arccos(np.sqrt( np.square(dest[0]) + np.square(dest[1]) ) / c_len)
-        # print(c_len / np.sqrt( np.square(dest[0]) + np.square(dest[1]) ))
-        # print(angle_dest)
-        result[1] = np.pi - angle_ac - angle_dest
-        
-        angle_ab = np.arccos((np.square(a_len)+np.square(b_len)-np.square(c_len)) / (2 * a_len * b_len))
-        
-        result[2] = (3/2) * np.pi - self.data.get_motor_offset_angle() - angle_ab
-        
-        result[3] = np.pi/2 + angle_ab - result[1]
-        
-        result[4] = np.pi/2 + np.arctan(lookat_xbase[1] / lookat_xbase[0])
-        
-        look_len = np.sqrt(np.square(lookat_xbase[0])+np.square(lookat_xbase[1])+np.square(lookat_xbase[2]))
-        
-        result[5] = np.pi - np.arccos(lookat_xbase[2]/look_len)
-        # print(result)
-        
+        temp1 = (np.square(a_len)+np.square(c_len)-np.square(b_len)) / (2 * a_len * c_len)
+        if temp1 >= -1 and temp1 <= 1:
+            angle_ac = np.arccos(temp1)
+            
+            temp2 = np.sqrt( np.square(dest[0]) + np.square(dest[1]) ) / c_len
+            if temp2 >= -1 and temp2 <= 1:
+                angle_dest = np.arccos(temp2)
+                # print(c_len / np.sqrt( np.square(dest[0]) + np.square(dest[1]) ))
+                # print(angle_dest)
+                result[1] = np.pi - angle_ac - angle_dest
+                
+                temp3 = (np.square(a_len)+np.square(b_len)-np.square(c_len)) / (2 * a_len * b_len)
+                if temp3 >= -1 and temp3 <= 1:
+                    angle_ab = np.arccos(temp3)
+                    
+                    result[2] = (3/2) * np.pi - self.data.get_motor_offset_angle() - angle_ab
+                    
+                    result[3] = np.pi/2 + angle_ab - result[1]
+                    
+                    result[4] = np.pi/2 + np.arctan(lookat_xbase[1] / lookat_xbase[0])
+                    
+                    look_len = np.sqrt(np.square(lookat_xbase[0])+np.square(lookat_xbase[1])+np.square(lookat_xbase[2]))
+                    
+                    temp4 = lookat_xbase[2]/look_len
+                    if temp4 >= -1 and temp4 <= 1:
+                        result[5] = np.pi - np.arccos(temp4)
+                    # print(result)
+                    
         return result
         
         

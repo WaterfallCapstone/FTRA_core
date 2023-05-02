@@ -20,8 +20,8 @@ class MotorLocation:
         armtip_loc_polar[2] = motor_value[0]
         
         cos_ac = (np.power(arm_length[1],2) - np.power(length2,2) + c_square) / (2*arm_length[1]*armtip_loc_polar[0])            
-    
-        armtip_loc_polar[1] = np.arccos(cos_ac) + motor_value[1] - np.pi/2
+        if cos_ac >= -1 and cos_ac <= 1:
+            armtip_loc_polar[1] = np.arccos(cos_ac) + motor_value[1] - np.pi/2
         # print(armtip_loc_polar)
         return armtip_loc_polar
     
