@@ -142,6 +142,7 @@ def mainprocess():
     control_wait = cur_time_cam
     tracking_wait = cur_time_cam
     # dest_motor = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+    print("here")
     while isrunning:
         cur_time_cam = time.time()
         
@@ -155,6 +156,7 @@ def mainprocess():
             command[1] = []
         
         if(cur_time_cam > nex_time_cam):
+            
             camera.run()
             imgencode = cv2.imencode('.jpg', camera.image)[1]
             stringData = base64.b64encode(imgencode).decode('utf-8')
@@ -162,6 +164,7 @@ def mainprocess():
             stringData = b64_src + stringData
             isface = Data.get_isface()
             emit("video", {"image" : stringData, "isface" : isface})
+            # print(stringData)
             
             motorvalue = Data.get_motor_value(False,False)
             emit("motor", {"motorvalue" : motorvalue})

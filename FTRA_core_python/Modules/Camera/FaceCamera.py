@@ -10,7 +10,13 @@ import numpy as np
 import os
 import platform
 import base64
+LEFT_EYE =[ 362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385,384, 398 ]
+# right eyes indices
+RIGHT_EYE=[ 33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161 , 246 ] 
 
+# irises Indices list
+LEFT_IRIS = [474,475, 476, 477]
+RIGHT_IRIS = [469, 470, 471, 472]
 class FaceCamera:
     def __init__(self, index,data, mode = "dev"):
         self.data = data
@@ -43,6 +49,7 @@ class FaceCamera:
         self.focal_length = 100
 
         self.mp_face_width = -1
+        self.img_h, self.img_w = self.image.shape[:2]
         # self.distance = 50
         
     def camera_update(self):
@@ -206,7 +213,22 @@ class FaceCamera:
     
     def calculate_distance(self):
         self.distance = (self.base_width * self.focal_length)/self.mp_face_width
-             
+    
+    def calculate_distance_by_eye(self):
+        
+        mask = np.zeros((self.img_h, self.img_w), dtype=np.uint8)
+        mesh_points=np.array([np.multiply([p.x, p.y], [self.img_w, self.img_h]).astype(int) 
+        for p in self.results.multi_face_landmarks[0].landmark])
+
+        (l_cx, l_cy), l_radius = cv2.minEnclosingCircle(mesh_points[LEFT_IRIS])
+        (r_cx, r_cy), r_radius = cv2.minEnclosingCircle(mesh_points[RIGHT_IRIS])
+        center_left = np.array([l_cx, l_cy], dtype=np.int32)
+        center_right = np.array([r_cx, r_cy], dtype=np.int32)
+        cv2.circle(self.image, center_left, int(l_radius), (0,255,0), 2, cv2.LINE_AA)
+        cv2.circle(self.image, center_right, int(r_radius), (0,255,0), 2, cv2.LINE_AA)
+        cv2.circle(mask, center_left, int(l_radius), (255,255,255), -1, cv2.LINE_AA)
+        cv2.circle(mask, center_right, int(r_radius), (255,255,255), -1, cv2.LINE_AA)
+
 
     def run(self):
         # while self.cap.isOpened():
@@ -232,6 +254,7 @@ class FaceCamera:
             if self.results.multi_face_landmarks:
                 self.data.set_isface(True)
                 data = self.get_data()
+
                 self.data.set_camface_dir_cart(self.calculate_face_dir_vector(data))
                 self.data.set_camface_loc_polar(self.get_loc_polar(self.get_face_loc(data)))
                 # self.dir_vector = self.calculate_face_dir_vector(data)
