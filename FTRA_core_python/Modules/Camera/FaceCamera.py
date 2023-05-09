@@ -49,7 +49,7 @@ class FaceCamera:
         self.focal_length = 100
 
         self.mp_face_width = -1
-        self.img_h, self.img_w = self.image.shape[:2]
+        # self.img_h, self.img_w = self.image.shape[:2]
         # self.distance = 50
         
     def camera_update(self):
@@ -214,20 +214,20 @@ class FaceCamera:
     def calculate_distance(self):
         self.distance = (self.base_width * self.focal_length)/self.mp_face_width
     
-    def calculate_distance_by_eye(self):
+    # def calculate_distance_by_eye(self):
         
-        mask = np.zeros((self.img_h, self.img_w), dtype=np.uint8)
-        mesh_points=np.array([np.multiply([p.x, p.y], [self.img_w, self.img_h]).astype(int) 
-        for p in self.results.multi_face_landmarks[0].landmark])
+    #     mask = np.zeros((self.img_h, self.img_w), dtype=np.uint8)
+    #     mesh_points=np.array([np.multiply([p.x, p.y], [self.img_w, self.img_h]).astype(int) 
+    #     for p in self.results.multi_face_landmarks[0].landmark])
 
-        (l_cx, l_cy), l_radius = cv2.minEnclosingCircle(mesh_points[LEFT_IRIS])
-        (r_cx, r_cy), r_radius = cv2.minEnclosingCircle(mesh_points[RIGHT_IRIS])
-        center_left = np.array([l_cx, l_cy], dtype=np.int32)
-        center_right = np.array([r_cx, r_cy], dtype=np.int32)
-        cv2.circle(self.image, center_left, int(l_radius), (0,255,0), 2, cv2.LINE_AA)
-        cv2.circle(self.image, center_right, int(r_radius), (0,255,0), 2, cv2.LINE_AA)
-        cv2.circle(mask, center_left, int(l_radius), (255,255,255), -1, cv2.LINE_AA)
-        cv2.circle(mask, center_right, int(r_radius), (255,255,255), -1, cv2.LINE_AA)
+    #     (l_cx, l_cy), l_radius = cv2.minEnclosingCircle(mesh_points[LEFT_IRIS])
+    #     (r_cx, r_cy), r_radius = cv2.minEnclosingCircle(mesh_points[RIGHT_IRIS])
+    #     center_left = np.array([l_cx, l_cy], dtype=np.int32)
+    #     center_right = np.array([r_cx, r_cy], dtype=np.int32)
+    #     cv2.circle(self.image, center_left, int(l_radius), (0,255,0), 2, cv2.LINE_AA)
+    #     cv2.circle(self.image, center_right, int(r_radius), (0,255,0), 2, cv2.LINE_AA)
+    #     cv2.circle(mask, center_left, int(l_radius), (255,255,255), -1, cv2.LINE_AA)
+    #     cv2.circle(mask, center_right, int(r_radius), (255,255,255), -1, cv2.LINE_AA)
 
 
     def run(self):

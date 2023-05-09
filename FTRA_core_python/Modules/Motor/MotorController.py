@@ -9,8 +9,8 @@ class MotorController:
         self.pastValue = pastValue
 
     def arrToString(self, command):
-        ret = ' '.join(command)
-        return ret
+        ret = ' '.join(map(str,command))
+        return ret 
 
     def checkDiff(self, command):
         for i in range(6):
