@@ -6,8 +6,8 @@ class DataController:
         self.arm_length = np.array([0.0,0.0,0.0,0.0,0.0,0.0,0.0])
         self.camera_offset = np.array([0.0,0.0])
         self.motor_offset_angle = np.pi
-        self.motor_value = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
-        self.motor_dest = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
+        self.motor_value = np.array([90.0,90.0,90.0,90.0,90.0,90.0])
+        self.motor_dest = np.array([90.0,90.0,90.0,90.0,90.0,90.0])
         self.destination_distance = 0.0
         self.tickrate = 100
         self.axis = 4

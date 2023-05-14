@@ -26,6 +26,7 @@ default_2 = 1/2
 default_3 = 0/1
 default_4 = 1/2
 default_5 = 1/2
+motor_tick_angle = 1
 
 [destination]
 distance = 60

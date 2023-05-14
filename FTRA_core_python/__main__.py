@@ -35,7 +35,7 @@ if(OperatingSystem == "Windows"):
     motor_contol = Motor.MotorController('COM7', 9600)
     camera = Camera.FaceCamera(1,Data,"only dir")
 elif(OperatingSystem == "Darwin"):
-    #motor_contol = Motor.MotorController('/dev/cu.Bluetooth-Incoming-Port', 9600)
+    # motor_contol = Motor.MotorController('/dev/cu.Bluetooth-Incoming-Port', 9600)
     camera = Camera.FaceCamera(0,Data,"only dir")
 else:
     motor_contol = Motor.MotorController('/dev/ttyACM0', 9600)
@@ -97,8 +97,10 @@ def start():
     global mode
     if mode == "control":
         mode = "tracking"
+        motor_contol.setMotor("tracking")
     else:
         mode = "control"
+        motor_contol.setMotor("control")
     emit("mode",{"mode" : mode})
     
 @io.on("stop", namespace="/controller")
@@ -206,7 +208,7 @@ def mainprocess():
             if cur_time_cam > tracking_wait:
                 tracking_wait = cur_time_cam + 1
                 #set motor with dest
-                Data.set_motor_value(Data.get_motor_dest(True))
+                
                 motor_contol.setMotor(Data.get_motor_dest(False))
                 
     print("running done")
