@@ -208,8 +208,8 @@ def mainprocess():
             if cur_time_cam > tracking_wait:
                 tracking_wait = cur_time_cam + 1
                 #set motor with dest
+                Data.set_motor_value(motor_contol.setMotor(Data.get_motor_value(False,False),Data.get_motor_dest(False)))
                 
-                motor_contol.setMotor(Data.get_motor_dest(False))
                 
     print("running done")
     return

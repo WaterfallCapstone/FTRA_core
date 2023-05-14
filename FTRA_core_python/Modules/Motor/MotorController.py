@@ -26,14 +26,32 @@ class MotorController:
     #             command[i] = self.pastValue[i]
     #     return command
     
-    def calculate_next(self, past, dest):
-        return
+    def calculateNext(self, past, dest):
+        next = [0,0,0,0,0,0]
+        for i in range(len(dest)):
+            if dest[i] > past[i]:
+                next[i] = past[i] + 1
+            elif dest[i] < past[i]:
+                next[i] = past[i] - 1
+            else:
+                next[i] = past[i]
+        return next
+    
+    def toStr(self,data):
+        result = ""
+        for element in data:
+            result += str(int(element))
+            result += " "
+        return result
     
     def setMotor(self, past, dest):
         if self.stat == "tracking":
             next = self.calculate_next(past, dest)
         else:
             next = dest.tolist()
+        
+        self.py_serial.write(next.encode())
+        return next
         # ret = self.arrToString(command.tolist())
         # self.pastValue = ret
         # print("motor ret " , ret)
