@@ -46,11 +46,12 @@ class MotorController:
     
     def setMotor(self, past, dest):
         if self.stat == "tracking":
-            next = self.calculate_next(past, dest)
+            next = self.calculateNext(past, dest)
         else:
-            next = dest.tolist()
-        
-        self.py_serial.write(next.encode())
+            next = dest
+        self.toStr(next)
+        print(self.toStr(next).encode())
+        self.py_serial.write(self.toStr(next).encode())
         return next
         # ret = self.arrToString(command.tolist())
         # self.pastValue = ret

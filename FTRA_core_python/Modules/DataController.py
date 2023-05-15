@@ -108,10 +108,10 @@ class DataController:
         self.image = data
 
     def set_motor_value(self,data):
-        self.motor_value = data
+        self.motor_value = data% (2*np.pi)
         
     def set_motor_dest(self,data):
-        self.motor_dest = data
+        self.motor_dest = data % (2*np.pi)
 
 
     ###########################################################
@@ -205,14 +205,28 @@ class DataController:
     def get_destination_distance(self):
         return self.destination_distance
 
-    def get_motor_dest(self, israd = True):
+    def get_motor_dest(self,isnumpy = True, israd = True):
         if israd:
-            return self.motor_dest
+            if isnumpy:
+                return self.motor_dest
+            else:
+                motor_data = []
+                for i in self.motor_dest:
+                    motor_data.append(i)
+                return motor_data
         else:
-            motor_dest = []
-            for i in self.motor_dest:
-                motor_dest.append(np.rad2deg(i))
-            return np.array(motor_dest)
+            if isnumpy:
+                value = self.motor_dest
+                # print(value)
+                for i in range(value.size) :
+                    value[i] = np.rad2deg(value[i])
+                return value
+            else:
+                motor_data = []
+                for i in self.motor_dest:
+                    motor_data.append(np.rad2deg(i))
+                return motor_data
+        
             
     
     def print_env(self):

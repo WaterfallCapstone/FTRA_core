@@ -97,10 +97,10 @@ def start():
     global mode
     if mode == "control":
         mode = "tracking"
-        motor_contol.setMotor("tracking")
+        motor_contol.setStat("tracking")
     else:
         mode = "control"
-        motor_contol.setMotor("control")
+        motor_contol.setStat("control")
     emit("mode",{"mode" : mode})
     
 @io.on("stop", namespace="/controller")
@@ -114,23 +114,32 @@ def stop():
 
 @io.on("setmotorclient", namespace="/controller")
 def setmotorclient(json):
-    old_Motor_Value = Data.get_motor_value(True, True)
-    new_Motor_Value = old_Motor_Value
-    global command
-    print(json["data"])
-    command[0] = "setmotor"
-    command[1] = np.array(json["data"].split(' '))
-    size = len(command[1])
-    for i in range(size):
-        if(command[1][i].isdigit() and int(command[1][i]) <= 180):
-            new_Motor_Value[i] = np.deg2rad(int(command[1][i]))
-        else:
-                command[1][i] = np.rad2deg(old_Motor_Value[i])
+    # old_Motor_Value = Data.get_motor_value(True, True)
+    # new_Motor_Value = old_Motor_Value
+    # global command
+    # print(json["data"])
+    # command[0] = "setmotor"
+    # command[1] = np.array(json["data"].split(' '))
+    # size = len(command[1])
+    # for i in range(size):
+    #     if(command[1][i].isdigit() and int(command[1][i]) <= 180):
+    #         new_Motor_Value[i] = np.deg2rad(int(command[1][i]))
+    #     else:
+    #             command[1][i] = np.rad2deg(old_Motor_Value[i])
         
 
-    print(new_Motor_Value)
-    Data.set_motor_value(new_Motor_Value)
+    # print(new_Motor_Value)
+    # Data.set_motor_value(new_Motor_Value)
     #motor_contol.setMotor(command[1])
+    motor_dest_client = json["data"].split(' ')
+    
+    for i in range(len(motor_dest_client)):
+        motor_dest_client[i] = np.deg2rad(float(motor_dest_client[i]))
+    if(len(motor_dest_client) == int(env.get_config('system','axis'))):
+        Data.set_motor_dest(np.array(motor_dest_client))
+        print(Data.get_motor_dest(False, False))
+        Data.set_motor_value(np.array(motor_contol.setMotor(Data.get_motor_value(False,False),Data.get_motor_dest(False,False))))
+                
 
 
 
@@ -200,7 +209,7 @@ def mainprocess():
 
                 Data.set_motor_dest(FaceLocation.calc_dest_arm(dest))
                 
-                emit("motor_dest", {"motor_dest" : Data.get_motor_dest(False).tolist()})
+                emit("motor_dest", {"motor_dest" : Data.get_motor_dest(False,False)})
                 
                 
             nex_time_cam = cur_time_cam + tickrate
@@ -208,7 +217,7 @@ def mainprocess():
             if cur_time_cam > tracking_wait:
                 tracking_wait = cur_time_cam + 1
                 #set motor with dest
-                Data.set_motor_value(motor_contol.setMotor(Data.get_motor_value(False,False),Data.get_motor_dest(False)))
+                Data.set_motor_value(np.array(motor_contol.setMotor(Data.get_motor_value(False,False),Data.get_motor_dest(False,False))))
                 
                 
     print("running done")
