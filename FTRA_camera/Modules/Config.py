@@ -19,8 +19,15 @@ class Config:
         self.config = configparser.ConfigParser()
         self.config_read()
 
-    def get_config(self,data1,data2, type = "str"):
-        result = self.config[str(data1)][str(data2)]
+    def exists(self,param1,param2):
+        if not (param1 in self.config.keys()):
+            return False
+        if not (param2 in self.config[param1].keys()):
+            return False
+        return True
+
+    def get_config(self,param1,param2, type = "str"):
+        result = self.config[str(param1)][str(param2)]
         if (type == "int"):
             return int(result)
         elif (type == "float"):
