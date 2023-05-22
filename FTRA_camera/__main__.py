@@ -7,9 +7,9 @@ from Modules import Config
 
 config = Config()
 
-
-tickrate = config.get_config('camera',"TICKRATE","int") / 1000
 port = config.get_config('system','PORT',"int")
+tickrate = config.get_config('camera',"tickrate","int") / 1000
+camindex = config.get_config('camera','camindex',"int")
 iscamerarun = False
 isfacemesh = False
 
@@ -28,7 +28,7 @@ io = SocketIO(app,cors_allowed_origins="*")
 
 @io.on("connect", namespace="/controller")
 def connect():
-    emit("connected", {"tickrate" : tickrate, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh})
+    emit("connected")
     return
 
 @io.on("disconnect", namespace="/controller")
@@ -36,14 +36,28 @@ def disconnect():
     emit("response")
     return
 
+@io.on("getconfig", namespace="/controller")
+def getconfig():
+    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh})
+
 @io.on("setconfig", namespace="/controller")
-def disconnect(json):
+def setconfig(json):
     for key in json.keys():
         if config.exists("camera", str(key)) : 
+            if(str(key) == "tickrate") : 
+                global tickrate
+                tickrate = json[key] / 1000
+                print("tickrate ",tickrate)
+                print(type(tickrate))
+            if(str(key) == "camindex") : 
+                global camindex
+                camindex = json[key]
+                print("camindex ",camindex)
+                print(type(camindex))
             config.set_config("camera",str(key),str(json[key]))
         else: 
             json[key] = "KeyError"
-    emit("setconfig", json)
+    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh})
     
     
     

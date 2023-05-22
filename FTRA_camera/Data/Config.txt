@@ -1,6 +1,7 @@
 [system]
-PORT = 5000
+port = 5000
 
 [camera]
-TICKRATE = 30
+tickrate = 20
+camindex = 2
 
