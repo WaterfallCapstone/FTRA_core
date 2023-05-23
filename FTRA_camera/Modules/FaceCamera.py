@@ -12,7 +12,13 @@ class FaceCamera:
     def __init__(self, index):
         self.cap = None
         self.isOpen = self.setIndex(index)
-        
+        self.image = None
+        self.meshimg = None
+        self.face_mesh = mp_face_mesh.FaceMesh(
+            max_num_faces=1,
+            refine_landmarks=True,
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5)   
     
     def setIndex(self,index):
         self.cap = cv2.VideoCapture(index)
@@ -25,3 +31,39 @@ class FaceCamera:
             return self.image
         else:
             return None
+    
+    def get_face_mesh_data(self):
+        # self.image.flags.writeable = False
+        if self.image is not None:
+            self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+            self.results = self.face_mesh.process(self.image)
+            return self.results
+    
+    def draw_face_mesh_data(self):
+        if self.image is not None:
+            self.image.flags.writeable = True
+            self.meshimg = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
+            if self.results.multi_face_landmarks:
+                for face_landmarks in self.results.multi_face_landmarks:
+                    mp_drawing.draw_landmarks(
+                        image=self.image,
+                        landmark_list=face_landmarks,
+                        connections=mp_face_mesh.FACEMESH_TESSELATION,
+                        landmark_drawing_spec=None,
+                        connection_drawing_spec=mp_drawing_styles
+                        .get_default_face_mesh_tesselation_style())
+                    mp_drawing.draw_landmarks(
+                        image=self.image,
+                        landmark_list=face_landmarks,
+                        connections=mp_face_mesh.FACEMESH_CONTOURS,
+                        landmark_drawing_spec=None,
+                        connection_drawing_spec=mp_drawing_styles
+                        .get_default_face_mesh_contours_style())
+                    mp_drawing.draw_landmarks(
+                        image=self.image,
+                        landmark_list=face_landmarks,
+                        connections=mp_face_mesh.FACEMESH_IRISES,
+                        landmark_drawing_spec=None,
+                        connection_drawing_spec=mp_drawing_styles
+                        .get_default_face_mesh_iris_connections_style())
+        return self.meshimg

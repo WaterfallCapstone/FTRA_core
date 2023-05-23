@@ -80,11 +80,17 @@ def getimg():
         cur_time_cont = time.time()
         if(cur_time_cont > nex_time_cont):
 
-            if image is not None:
-                if isfacemesh:
+            isimg = False
+            if isfacemesh :
+                meshimg = camera.draw_face_mesh_data()
+                if meshimg is not None:
                     imgencode = cv2.imencode('.jpg', meshimg)[1]
-                else:
-                    imgencode = cv2.imencode('.jpg', image)[1]
+                    isimg = True
+            elif iscamerarun and image is not None:
+                print("img too")
+                imgencode = cv2.imencode('.jpg', image)[1]
+                isimg = True
+            if isimg:
                 stringData = base64.b64encode(imgencode).decode('utf-8')
                 b64_src = 'data:image/jpg;base64,'
                 stringData = b64_src + stringData
@@ -95,12 +101,15 @@ def getimg():
 @io.on("start", namespace="/controller")
 def start():
     global iscamerarun, isfacemesh, tickrate, image, meshimg
-    cur_time_cont = time.time()
-    nex_time_cont = cur_time_cont
-    print(iscamerarun)
     while iscamerarun:
-        cur_time_cont = time.time()
         image = camera.camera_update()
+
+@io.on("startmesh", namespace="/controller")
+def startmesh():
+    global image, meshimg
+    while iscamerarun:
+        camera.get_face_mesh_data()
+        # meshimg = camera.draw_face_mesh_data()
 
 
 @io.on("stop", namespace="/controller")
@@ -108,6 +117,8 @@ def stop():
     global iscamerarun
     iscamerarun = False
     emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh, "isOpen" : camera.isOpen})
+
+
 
 @io.on("connect", namespace="/data")
 def connect():
@@ -117,10 +128,29 @@ def connect():
 def disconnect():
     emit("response")
 
+@io.on("start", namespace="/data")
+def start():
+    global iscamerarun, isfacemesh, tickrate, image, meshimg
+    while iscamerarun:
+        image = camera.camera_update()
 
+@io.on("startmesh", namespace="/data")
+def startmesh():
+    global image, meshimg
+    while iscamerarun:
+        camera.get_face_mesh_data()
+    
+@io.on("getlandmarks", namespace="/data")
+def startmesh():
+    global iscamerarun, isfacemesh, tickrate, image, meshimg
+    cur_time_cont =time.time()
+    nex_time_cont = cur_time_cont
+    while iscamerarun:
+        cur_time_cont = time.time()
+        if(cur_time_cont > nex_time_cont):
+            emit("landmarks", {"landmark" : camera.results})
 
-    
-    
+            nex_time_cont = cur_time_cont + tickrate
     
     
     
