@@ -100,12 +100,8 @@ def start():
     print(iscamerarun)
     while iscamerarun:
         cur_time_cont = time.time()
-        if(cur_time_cont > nex_time_cont):
-            image = camera.camera_update()
-            # if isfacemesh:
-            #     imgencode = cv2.imencode('.jpg', image)[1]
-            
-            nex_time_cont = cur_time_cont + tickrate
+        image = camera.camera_update()
+
 
 @io.on("stop", namespace="/controller")
 def stop():
