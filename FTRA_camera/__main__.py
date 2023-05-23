@@ -3,7 +3,10 @@ import numpy as np
 from flask import Flask, url_for, render_template
 from flask_socketio import SocketIO, emit
 from Modules import Config
-
+from Modules import FaceCamera
+import time
+import cv2
+import base64
 
 config = Config()
 
@@ -12,6 +15,9 @@ tickrate = config.get_config('camera',"tickrate","int") / 1000
 camindex = config.get_config('camera','camindex',"int")
 iscamerarun = False
 isfacemesh = False
+camera = FaceCamera(index=camindex)
+image = None
+meshimg = None
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 STATIC_FOLDER = os.path.join(ROOT_PATH, "src")
@@ -38,36 +44,74 @@ def disconnect():
 
 @io.on("getconfig", namespace="/controller")
 def getconfig():
-    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh})
+    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh, "isOpen" : camera.isOpen})
 
 @io.on("setconfig", namespace="/controller")
 def setconfig(json):
+    global tickrate, tickrate, iscamerarun, isfacemesh
     for key in json.keys():
+        if key == "camera" :
+            global camera, camindex
+            if (json['camera'] == True):
+                camera.setIndex(camindex)
+                iscamerarun = camera.isOpen
+            elif (json['camera'] == False):
+                iscamerarun = False
+                
+        if key == "facemesh" :
+            if (json['facemesh'] == True) or (json['facemesh'] == False):
+                isfacemesh = json['facemesh']
         if config.exists("camera", str(key)) : 
             if(str(key) == "tickrate") : 
-                global tickrate
                 tickrate = json[key] / 1000
-                print("tickrate ",tickrate)
-                print(type(tickrate))
             if(str(key) == "camindex") : 
-                global camindex
                 camindex = json[key]
-                print("camindex ",camindex)
-                print(type(camindex))
             config.set_config("camera",str(key),str(json[key]))
         else: 
             json[key] = "KeyError"
-    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh})
+    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh, "isOpen" : camera.isOpen})
     
-    
-    
-    
-    
-    
-    
-    
-    
+@io.on("getimg", namespace="/controller")
+def getimg():
+    global iscamerarun, isfacemesh, tickrate, image, meshimg
+    cur_time_cont =time.time()
+    nex_time_cont = cur_time_cont
+    while iscamerarun:
+        cur_time_cont = time.time()
+        if(cur_time_cont > nex_time_cont):
 
+            if image is not None:
+                if isfacemesh:
+                    imgencode = cv2.imencode('.jpg', meshimg)[1]
+                else:
+                    imgencode = cv2.imencode('.jpg', image)[1]
+                stringData = base64.b64encode(imgencode).decode('utf-8')
+                b64_src = 'data:image/jpg;base64,'
+                stringData = b64_src + stringData
+                emit("video", {"image" : stringData})
+
+            nex_time_cont = cur_time_cont + tickrate
+        
+@io.on("start", namespace="/controller")
+def start():
+    global iscamerarun, isfacemesh, tickrate, image, meshimg
+    cur_time_cont = time.time()
+    nex_time_cont = cur_time_cont
+    print(iscamerarun)
+    while iscamerarun:
+        cur_time_cont = time.time()
+        if(cur_time_cont > nex_time_cont):
+            image = camera.camera_update()
+            # if isfacemesh:
+            #     imgencode = cv2.imencode('.jpg', image)[1]
+            
+            nex_time_cont = cur_time_cont + tickrate
+
+@io.on("stop", namespace="/controller")
+def stop():
+    global iscamerarun
+    iscamerarun = False
+    emit("getconfig", {"tickrate" : tickrate, "camindex" : camindex, "iscamrun" : iscamerarun, "isfacemesh" : isfacemesh, "isOpen" : camera.isOpen})
 
 @io.on("connect", namespace="/data")
 def connect():
@@ -76,6 +120,8 @@ def connect():
 @io.on("disconnect", namespace="/data")
 def disconnect():
     emit("response")
+
+
 
     
     
@@ -93,7 +139,7 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    
+    # print(camera.isOpen)
     print("creating server")
     io.run(app,host='localhost',port=port)
-  
+    
