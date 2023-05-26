@@ -1,0 +1,13 @@
+[system]
+title = FTRA_CORE
+version = 1.0.2
+port = 4000
+tickrate = 20
+
+[camera]
+camindex = 1
+
+[motor]
+arduinoport = /dev/ACM0
+baudrate = 9600
+
