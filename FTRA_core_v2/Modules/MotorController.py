@@ -33,6 +33,23 @@ class MotorController:
         return self.arduinoexists
         
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
     def setStat(self,stat):
         if(stat == "control" or stat == "tracking"):
             self.stat = stat
