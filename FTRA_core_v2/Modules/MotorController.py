@@ -14,6 +14,9 @@ class MotorController:
         #     port = port,
         #     baudrate = baudrate
         # )
+        self.serial = None
+        if self.arduinoexists:
+            self.connect_port()
         self.pastValue = pastValue
         self.stat = stat
 
@@ -32,7 +35,9 @@ class MotorController:
             self.arduinoexists = False
         return self.arduinoexists
         
-
+    def connect_port(self):
+        self.serial =  serial.Serial(self.port,self.baudrate)
+        return
 
 
 
