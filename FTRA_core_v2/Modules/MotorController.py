@@ -38,6 +38,11 @@ class MotorController:
     def connect_port(self):
         self.serial =  serial.Serial(self.port,self.baudrate)
         return
+    
+    def do_something(self, data):
+        if data is not None:
+            print("mesh data")
+        
 
 
 
